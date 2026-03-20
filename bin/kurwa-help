@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+# kurwa-help — help, with judgment
+# The fact that you need this is noted.
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+CYAN='\033[0;36m'
+PURPLE='\033[0;35m'
+DIM='\033[2m'
+NC='\033[0m'
+
+echo ""
+echo -e "${RED}🦫 KURWA LINUX — HELP${NC}"
+echo -e "${DIM}   (the fact that you need this is logged and noted)${NC}"
+echo ""
+echo -e "${GREEN}  kurwa${NC}           → nuclear update + bóbr + crisis of faith"
+echo -e "${GREEN}  install ${DIM}<pkg>${NC}  → install with unsolicited commentary"
+echo -e "${GREEN}  remove ${DIM}<pkg>${NC}   → delete with the energy of clearing an ex's stuff"
+echo -e "${GREEN}  update${NC}           → alias for kurwa. the WHOLE command is just 'kurwa'. we simplified."
+echo -e "${GREEN}  beaver${NC}           → art. therapy. religion. all three."
+echo -e "${GREEN}  wtf${NC}              → forensic breakdown of your recent mistakes"
+echo -e "${GREEN}  kurwa-status${NC}     → confirm system lives (extremely low bar, somehow met)"
+echo -e "${GREEN}  bobr${NC}             → direct audience with the bóbr. he has thoughts."
+echo -e "${GREEN}  kurwa-help${NC}       → you are HERE. reading THIS."
+echo ""
+echo -e "${YELLOW}  Tips:${NC}"
+echo -e "  ${DIM}• The Arch wiki has 400,000 words. Your answer is in there. Somewhere.${NC}"
+echo -e "  ${DIM}• chmod 777 is not a solution. It is a confession.${NC}"
+echo -e "  ${DIM}• If nothing works: run kurwa. If kurwa fails: call your mother.${NC}"
+echo -e "  ${DIM}• git commit -m 'fix' is not a commit message. The bóbr has seen your history.${NC}"
+echo ""
+echo -e "${PURPLE}  Hidden features exist. The bóbr hid them.${NC}"
+echo -e "${DIM}  He will not tell you. Figure it out.${NC}"
+echo ""

@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+# beaver — summon the bóbr
+# Art. Therapy. Religion. All three at once.
+
+AMBER='\033[0;33m'
+GREEN='\033[0;32m'
+DIM='\033[2m'
+NC='\033[0m'
+
+echo ""
+
+if command -v figlet &>/dev/null && command -v lolcat &>/dev/null; then
+    figlet -f slant "BOBR KURWA" | lolcat
+elif command -v figlet &>/dev/null; then
+    figlet -f slant "BOBR KURWA"
+else
+    echo -e "${AMBER}"
+    echo "  ██████╗  ██████╗ ██████╗ ██████╗     ██╗  ██╗██╗   ██╗██████╗ ██╗    ██╗ █████╗"
+    echo "  ██╔══██╗██╔═══██╗██╔══██╗██╔══██╗    ██║ ██╔╝██║   ██║██╔══██╗██║    ██║██╔══██╗"
+    echo "  ██████╔╝██║   ██║██████╔╝██████╔╝    █████╔╝ ██║   ██║██████╔╝██║ █╗ ██║███████║"
+    echo "  ██╔══██╗██║   ██║██╔══██╗██╔══██╗    ██╔═██╗ ██║   ██║██╔══██╗██║███╗██║██╔══██║"
+    echo "  ██████╔╝╚██████╔╝██████╔╝██║  ██║    ██║  ██╗╚██████╔╝██║  ██║╚███╔███╔╝██║  ██║"
+    echo "  ╚═════╝  ╚═════╝ ╚═════╝ ╚═╝  ╚═╝    ╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═╝ ╚══╝╚══╝ ╚═╝  ╚═╝"
+    echo -e "${NC}"
+fi
+
+echo ""
+echo -e "${DIM}  Fun fact: Castor fiber can chew through a tree in 20 minutes.${NC}"
+echo -e "${DIM}  You have had the same vim buffer open for 3 days.${NC}"
+echo -e "${DIM}  The bóbr is more productive. The bóbr does not use vim.${NC}"
+echo ""
+echo -e "${GREEN}  🦫  Castor fiber wishes you a productive session.${NC}"
+echo -e "${GREEN}      He will be watching. He is always watching. Kurwa.${NC}"
+echo ""

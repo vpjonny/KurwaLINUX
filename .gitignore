@@ -1,0 +1,26 @@
+# Kurwa Linux .gitignore
+
+# Bring your own bóbr
+sounds/*.mp3
+sounds/*.wav
+sounds/*.ogg
+sounds/*.flac
+
+# bashrc backups — personal crime scene
+*.bak
+*.bak-kurwa*
+.bashrc.*
+
+# System detritus
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# Logs (the bóbr reads these, not you)
+*.log
+/tmp/
+
+# node_modules — always, everywhere, forever
+node_modules/

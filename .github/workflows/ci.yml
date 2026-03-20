@@ -1,0 +1,76 @@
+name: 🦫 Kurwa Linux CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  shellcheck:
+    name: Shellcheck (because we kurwa have standards)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install shellcheck
+        run: sudo apt-get install -y shellcheck
+      - name: Check all scripts
+        run: |
+          echo "🦫 Checking scripts for correctness..."
+          find . -name "*.sh" -o -name "kurwa" -o -name "beaver" \
+                 -o -name "wtf" -o -name "bobr" -o -name "kurwa-status" \
+                 -o -name "kurwa-help" | grep -v ".git" \
+            | xargs shellcheck --severity=warning || true
+          echo "✅ Done. Issues are features, not bugs. Kurwa."
+
+  kurwa-count:
+    name: Enforce kurwa density in README (min 5, this is non-negotiable)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Count kurwas
+        run: |
+          COUNT=$(grep -oi "kurwa" README.md | wc -l)
+          echo "🦫 'kurwa' occurrences in README: $COUNT"
+          if [ "$COUNT" -lt 5 ]; then
+            echo "❌ INSUFFICIENT KURWA. Minimum: 5. Current: $COUNT."
+            echo "   Add more kurwa to README.md. This is not optional."
+            echo "   The bóbr is disappointed."
+            exit 1
+          fi
+          echo "✅ Kurwa density: acceptable. The bóbr nods."
+
+  check-executables:
+    name: Verify bin/ scripts are executable
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check permissions
+        run: |
+          echo "🦫 Checking bin/ script permissions..."
+          FAILED=0
+          for f in bin/*; do
+            [ -f "$f" ] || continue
+            if [ ! -x "$f" ]; then
+              echo "  ❌ $f is not executable — chmod +x that, kurwa"
+              FAILED=1
+            else
+              echo "  ✅ $f"
+            fi
+          done
+          [ "$FAILED" -eq 0 ] || exit 1
+          echo "All scripts executable. The bóbr approves."
+
+  vibe-check:
+    name: Vibe check (the most important CI step)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check vibes
+        run: |
+          echo "🦫 Running vibe check..."
+          sleep 1
+          echo "🦫 Vibes: IMMACULATE"
+          echo "🦫 Bóbr status: WATCHING"
+          echo "🦫 Rage level: APPROPRIATE"
+          echo "✅ Vibe check passed. You may merge. Kurwa."

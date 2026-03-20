@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kurwa Linux — Interactive Demo</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Bebas+Neue&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --red:#E63B2E;--red-dark:#9A1F15;--red-glow:#FF4438;
+  --amber:#EF9F27;--text:#F0EBE0;--text-dim:#9A8F82;
+  --bg:#0D0A08;--bg2:#130F0B;--green:#4AE54A;--purple:#C084FC;--cyan:#67E8F9;
+}
+html,body{height:100%;background:var(--bg);font-family:'Share Tech Mono',monospace;color:var(--text);overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.12) 2px,rgba(0,0,0,0.12) 4px);pointer-events:none;z-index:999;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-4px)}60%{transform:translateX(4px)}}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+@keyframes glitch{0%{transform:translateX(0)}20%{transform:translateX(-2px) skewX(-1deg)}40%{transform:translateX(2px)}60%{transform:translateX(-1px) skewX(1deg)}80%{transform:translateX(1px)}100%{transform:translateX(0)}}
+@keyframes flash{0%,100%{opacity:0.8}50%{opacity:0.2}}
+
+.header{background:var(--red-dark);border-bottom:2px solid var(--red);padding:10px 20px 8px;display:flex;align-items:center;gap:12px;position:relative;overflow:hidden;}
+.header::after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent,transparent 60px,rgba(255,255,255,0.03) 60px,rgba(255,255,255,0.03) 61px);}
+.header-dots{display:flex;gap:6px;z-index:1;}
+.dot{width:12px;height:12px;border-radius:50%;cursor:pointer;transition:transform 0.1s;}
+.dot:hover{transform:scale(1.3);}
+.dot.r{background:#E63B2E;border:1px solid #FF6B5B;}
+.dot.y{background:#EF9F27;border:1px solid #FFB84A;}
+.dot.g{background:#4AE54A;border:1px solid #70FF70;}
+.header-title{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:3px;color:var(--text);z-index:1;cursor:default;}
+.header-badge{margin-left:auto;font-size:11px;color:var(--amber);letter-spacing:2px;z-index:1;animation:blink 1.2s step-end infinite;}
+
+.hero{padding:20px 20px 12px;text-align:center;border-bottom:1px solid rgba(230,59,46,0.3);}
+.ascii-logo{font-size:clamp(5px,1.4vw,11px);line-height:1.15;color:var(--red);white-space:pre;text-shadow:0 0 12px var(--red-glow);font-family:'Share Tech Mono',monospace;display:inline-block;cursor:pointer;}
+.ascii-logo:hover{animation:glitch 0.3s ease;}
+.hero-sub{margin-top:8px;font-size:12px;color:var(--amber);letter-spacing:3px;}
+.hero-tagline{margin-top:3px;font-size:11px;color:var(--text-dim);font-style:italic;cursor:pointer;}
+.hero-tagline:hover{color:var(--amber);}
+
+.fortune{padding:10px 20px;border-bottom:1px solid rgba(230,59,46,0.2);background:rgba(239,159,39,0.05);font-size:11px;color:var(--amber);letter-spacing:1px;font-style:italic;min-height:36px;display:flex;align-items:center;gap:8px;cursor:pointer;}
+.fortune-icon{font-size:14px;animation:bounce 2s ease-in-out infinite;display:inline-block;flex-shrink:0;}
+
+.rage-section{padding:14px 20px;border-bottom:1px solid rgba(230,59,46,0.2);}
+.rage-label{font-size:10px;color:var(--text-dim);letter-spacing:3px;margin-bottom:6px;display:flex;justify-content:space-between;}
+.rage-bar-track{height:20px;background:#1A1210;border:1px solid rgba(230,59,46,0.4);border-radius:2px;overflow:hidden;position:relative;cursor:pointer;}
+.rage-bar-fill{height:100%;width:0%;background:linear-gradient(90deg,#8B1F15,#E63B2E,#FF6B1A,#EF9F27);transition:width 0.08s linear;}
+.rage-bar-fill::after{content:'';position:absolute;right:0;top:0;bottom:0;width:4px;background:white;opacity:0.8;animation:flash 0.1s step-end infinite;}
+.rage-bar-text{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:11px;letter-spacing:2px;color:var(--text);mix-blend-mode:difference;}
+
+.status-row{display:grid;grid-template-columns:1fr 1fr 1fr;border-bottom:1px solid rgba(230,59,46,0.2);}
+.stat-cell{padding:10px 14px;border-right:1px solid rgba(230,59,46,0.2);cursor:pointer;transition:background 0.15s;}
+.stat-cell:last-child{border-right:none;}
+.stat-cell:hover{background:rgba(230,59,46,0.06);}
+.stat-label{font-size:10px;color:var(--text-dim);letter-spacing:2px;margin-bottom:3px;}
+.stat-value{font-size:17px;font-family:'Bebas Neue',sans-serif;letter-spacing:2px;}
+.stat-value.red{color:var(--red);}
+.stat-value.green{color:var(--green);}
+.stat-value.amber{color:var(--amber);}
+.stat-tooltip{font-size:9px;color:var(--text-dim);margin-top:2px;}
+
+.terminal{padding:14px 20px;border-bottom:1px solid rgba(230,59,46,0.2);min-height:280px;max-height:360px;overflow-y:auto;}
+.terminal::-webkit-scrollbar{width:4px;}
+.terminal::-webkit-scrollbar-track{background:var(--bg2);}
+.terminal::-webkit-scrollbar-thumb{background:var(--red-dark);}
+.t-line{font-size:12px;line-height:1.65;white-space:pre-wrap;word-break:break-all;}
+.t-prompt{color:var(--red);}
+.t-cmd{color:var(--text);}
+.t-ok{color:var(--green);}
+.t-err{color:var(--red);}
+.t-warn{color:var(--amber);}
+.t-info{color:var(--text-dim);}
+.t-bobr{color:var(--amber);}
+.t-joke{color:var(--purple);font-style:italic;}
+.t-sarcasm{color:var(--cyan);}
+.t-secret{color:#FF6FFF;}
+.t-system{color:var(--green);font-weight:bold;}
+
+.input-row{display:flex;align-items:center;gap:8px;padding:10px 20px;border-bottom:1px solid rgba(230,59,46,0.2);background:var(--bg2);}
+.input-prompt{color:var(--red);font-size:13px;white-space:nowrap;flex-shrink:0;}
+.cmd-input{flex:1;background:transparent;border:none;outline:none;color:var(--text);font-family:'Share Tech Mono',monospace;font-size:13px;caret-color:var(--green);}
+.cmd-input::placeholder{color:var(--text-dim);}
+.run-btn{background:var(--red-dark);border:1px solid var(--red);color:var(--text);font-family:'Share Tech Mono',monospace;font-size:11px;padding:4px 12px;cursor:pointer;letter-spacing:2px;transition:background 0.1s;flex-shrink:0;}
+.run-btn:hover{background:var(--red);}
+.run-btn:active{transform:scale(0.97);}
+
+.cmd-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;border-bottom:1px solid rgba(230,59,46,0.2);background:rgba(230,59,46,0.15);}
+.cmd-btn{background:var(--bg2);border:none;color:var(--text);font-family:'Share Tech Mono',monospace;font-size:12px;padding:10px 14px;cursor:pointer;text-align:left;display:flex;align-items:center;gap:8px;transition:background 0.1s;}
+.cmd-btn:hover{background:#1E1410;}
+.cmd-btn:active{background:#2A1A12;}
+.cmd-icon{color:var(--red);font-size:13px;min-width:14px;}
+.cmd-desc{font-size:10px;color:var(--text-dim);display:block;margin-top:2px;}
+
+.egg-strip{border-bottom:1px solid rgba(230,59,46,0.2);background:var(--bg2);padding:8px 20px;display:flex;gap:6px;flex-wrap:wrap;align-items:center;}
+.egg-label{font-size:10px;color:var(--text-dim);letter-spacing:2px;margin-right:4px;flex-shrink:0;}
+.egg-btn{background:transparent;border:1px solid rgba(230,59,46,0.3);color:var(--text-dim);font-family:'Share Tech Mono',monospace;font-size:10px;padding:3px 8px;cursor:pointer;letter-spacing:1px;transition:all 0.1s;border-radius:2px;}
+.egg-btn:hover{border-color:var(--red);color:var(--amber);}
+
+.secret-strip{border-bottom:1px solid rgba(192,132,252,0.2);background:rgba(192,132,252,0.03);padding:6px 20px;display:flex;gap:6px;flex-wrap:wrap;align-items:center;}
+.secret-label{font-size:10px;color:rgba(192,132,252,0.5);letter-spacing:2px;margin-right:4px;flex-shrink:0;}
+.secret-btn{background:transparent;border:1px solid rgba(192,132,252,0.2);color:rgba(192,132,252,0.4);font-family:'Share Tech Mono',monospace;font-size:10px;padding:3px 8px;cursor:pointer;letter-spacing:1px;transition:all 0.1s;border-radius:2px;}
+.secret-btn:hover{border-color:var(--purple);color:var(--purple);}
+
+.konami-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:9999;align-items:center;justify-content:center;flex-direction:column;gap:16px;cursor:pointer;}
+.konami-overlay.show{display:flex;}
+.konami-ascii{font-size:clamp(8px,2vw,16px);color:var(--amber);white-space:pre;text-align:center;text-shadow:0 0 20px var(--amber);line-height:1.2;}
+.konami-text{font-size:13px;color:var(--text-dim);letter-spacing:2px;text-align:center;}
+
+.footer{padding:10px 20px;display:flex;justify-content:space-between;align-items:center;font-size:10px;color:var(--text-dim);letter-spacing:2px;}
+.footer-bobr{color:var(--amber);cursor:pointer;}
+.footer-link{color:var(--text-dim);text-decoration:none;}
+.footer-link:hover{color:var(--amber);}
+.shake{animation:shake 0.35s ease;}
+</style>
+</head>
+<body>
+
+<div class="konami-overlay" id="konamiOverlay" onclick="this.classList.remove('show')">
+<pre class="konami-ascii">
+ ██████╗ ██████╗ ███╗   ██╗ █████╗ ███╗   ███╗██╗
+██╔════╝██╔═══██╗████╗  ██║██╔══██╗████╗ ████║██║
+██║     ██║   ██║██╔██╗ ██║███████║██╔████╔██║██║
+██║     ██║   ██║██║╚██╗██║██╔══██║██║╚██╔╝██║██║
+╚██████╗╚██████╔╝██║ ╚████║██║  ██║██║ ╚═╝ ██║██║
+ ╚═════╝ ╚═════╝ ╚═╝  ╚═══╝╚═╝  ╚═╝╚═╝     ╚═╝╚═╝
+
+    ██╗   ██╗███╗   ██╗██╗      ██████╗  ██████╗██╗  ██╗███████╗██████╗
+    ██║   ██║████╗  ██║██║     ██╔═══██╗██╔════╝██║ ██╔╝██╔════╝██╔══██╗
+    ██║   ██║██╔██╗ ██║██║     ██║   ██║██║     █████╔╝ █████╗  ██║  ██║
+    ██║   ██║██║╚██╗██║██║     ██║   ██║██║     ██╔═██╗ ██╔══╝  ██║  ██║
+    ╚██████╔╝██║ ╚████║███████╗╚██████╔╝╚██████╗██║  ██╗███████╗██████╔╝
+     ╚═════╝ ╚═╝  ╚═══╝╚══════╝ ╚═════╝  ╚═════╝╚═╝  ╚═╝╚══════╝╚═════╝
+
+                    🦫  +30 LIVES  🦫
+                  THE BOBR GRANTS YOU MERCY
+</pre>
+  <div class="konami-text">↑↑↓↓←→←→BA — classic. the bóbr is impressed.<br><br>click anywhere to close</div>
+</div>
+
+<div class="header" id="header">
+  <div class="header-dots">
+    <div class="dot r" onclick="dotClick('r')"></div>
+    <div class="dot y" onclick="dotClick('y')"></div>
+    <div class="dot g" onclick="dotClick('g')"></div>
+  </div>
+  <div class="header-title" id="headerTitle" onclick="titleClick()">kurwa-linux — bash — 80x24</div>
+  <div class="header-badge" id="headerBadge">● RAGE MODE ON</div>
+</div>
+
+<div class="hero">
+  <pre class="ascii-logo" id="asciiLogo" onclick="logoClick()">██╗  ██╗██╗   ██╗██████╗ ██╗    ██╗ █████╗     ██╗     ██╗███╗   ██╗██╗   ██╗██╗  ██╗
+██║ ██╔╝██║   ██║██╔══██╗██║    ██║██╔══██╗    ██║     ██║████╗  ██║██║   ██║╚██╗██╔╝
+█████╔╝ ██║   ██║██████╔╝██║ █╗ ██║███████║    ██║     ██║██╔██╗ ██║██║   ██║ ╚███╔╝ 
+██╔═██╗ ██║   ██║██╔══██╗██║███╗██║██╔══██║    ██║     ██║██║╚██╗██║██║   ██║ ██╔██╗ 
+██║  ██╗╚██████╔╝██║  ██║╚███╔███╔╝██║  ██║    ███████╗██║██║ ╚████║╚██████╔╝██╔╝ ██╗
+╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═╝ ╚══╝╚══╝ ╚═╝  ╚═╝    ╚══════╝╚═╝╚═╝  ╚═══╝ ╚═════╝ ╚═╝  ╚═╝</pre>
+  <div class="hero-sub">🦫 Bóbr-Powered · Arch-Based · Zero Mercy</div>
+  <div class="hero-tagline" id="tagline" onclick="cycleTagline()">"It works on my machine" — Castor fiber, 2024 &nbsp;[click to change]</div>
+</div>
+
+<div class="fortune" id="fortune" onclick="rotateFortune()">
+  <span class="fortune-icon">🦫</span>
+  <span id="fortuneText">Loading bóbr wisdom...</span>
+</div>
+
+<div class="rage-section">
+  <div class="rage-label">
+    <span>SYSTEM RAGE LEVEL</span>
+    <span id="rageComment">calculating existential dread...</span>
+  </div>
+  <div class="rage-bar-track" onclick="rageBarClick()">
+    <div class="rage-bar-fill" id="rageFill"></div>
+    <div class="rage-bar-text" id="rageText">...</div>
+  </div>
+</div>
+
+<div class="status-row">
+  <div class="stat-cell" onclick="runCmd('uname -a')">
+    <div class="stat-label">KERNEL</div>
+    <div class="stat-value red" id="kernelVal">6.7.9-kurwa</div>
+    <div class="stat-tooltip" id="kernelTip">still booting, probably</div>
+  </div>
+  <div class="stat-cell" onclick="runCmd('pacman -Q')">
+    <div class="stat-label">PACKAGES</div>
+    <div class="stat-value amber" id="pkgVal">1337</div>
+    <div class="stat-tooltip" id="pkgTip">most of them unnecessary</div>
+  </div>
+  <div class="stat-cell" onclick="runCmd('bobr')">
+    <div class="stat-label">BOBR STATUS</div>
+    <div class="stat-value green" id="bobrVal">WATCHING</div>
+    <div class="stat-tooltip" id="bobrTip">always watching. always.</div>
+  </div>
+</div>
+
+<div class="terminal" id="terminal"></div>
+
+<div class="input-row">
+  <div class="input-prompt">user@kurwa-linux ~ $</div>
+  <input class="cmd-input" id="cmdInput" placeholder="try: help, sudo, ping, git blame, ls -la, python3..." autocomplete="off" spellcheck="false">
+  <button class="run-btn" onclick="runCustom()">EXECUTE</button>
+</div>
+
+<div class="cmd-grid">
+  <button class="cmd-btn" onclick="runCmd('kurwa')"><span class="cmd-icon">🔥</span><span><code>kurwa</code><span class="cmd-desc">nuclear update, existential dread</span></span></button>
+  <button class="cmd-btn" onclick="runCmd('beaver')"><span class="cmd-icon">🦫</span><span><code>beaver</code><span class="cmd-desc">the only therapy you can afford</span></span></button>
+  <button class="cmd-btn" onclick="runCmd('wtf')"><span class="cmd-icon">💀</span><span><code>wtf</code><span class="cmd-desc">forensic analysis of your sins</span></span></button>
+  <button class="cmd-btn" onclick="runCmd('kurwa-status')"><span class="cmd-icon">📊</span><span><code>kurwa-status</code><span class="cmd-desc">is it on fire? check here.</span></span></button>
+  <button class="cmd-btn" onclick="runCmd('install neovim')"><span class="cmd-icon">📦</span><span><code>install neovim</code><span class="cmd-desc">join the insufferable club</span></span></button>
+  <button class="cmd-btn" onclick="runCmd('kurwa-help')"><span class="cmd-icon">❓</span><span><code>kurwa-help</code><span class="cmd-desc">you clearly need this</span></span></button>
+</div>
+
+<div class="egg-strip">
+  <span class="egg-label">KNOWN:</span>
+  <button class="egg-btn" onclick="runCmd('rm -rf /')">rm -rf /</button>
+  <button class="egg-btn" onclick="runCmd('sudo apt')">sudo apt</button>
+  <button class="egg-btn" onclick="runCmd('neofetch')">neofetch</button>
+  <button class="egg-btn" onclick="runCmd('exit')">exit</button>
+  <button class="egg-btn" onclick="runCmd('windows')">windows</button>
+  <button class="egg-btn" onclick="runCmd('nano')">nano</button>
+  <button class="egg-btn" onclick="runCmd('fortune')">fortune</button>
+  <button class="egg-btn" onclick="runCmd('uname -a')">uname -a</button>
+</div>
+
+<div class="secret-strip">
+  <span class="secret-label">????? :</span>
+  <button class="secret-btn" onclick="runCmd('sudo make me a sandwich')">sudo make me a sandwich</button>
+  <button class="secret-btn" onclick="runCmd('git blame')">git blame</button>
+  <button class="secret-btn" onclick="runCmd('ping 8.8.8.8')">ping 8.8.8.8</button>
+  <button class="secret-btn" onclick="runCmd('ls -la')">ls -la</button>
+  <button class="secret-btn" onclick="runCmd('cat /etc/passwd')">cat /etc/passwd</button>
+  <button class="secret-btn" onclick="runCmd('ssh root@localhost')">ssh root@localhost</button>
+  <button class="secret-btn" onclick="runCmd('python3')">python3</button>
+  <button class="secret-btn" onclick="runCmd('curl https://google.com')">curl google</button>
+  <button class="secret-btn" onclick="runCmd('htop')">htop</button>
+  <button class="secret-btn" onclick="runCmd('crontab -l')">crontab -l</button>
+</div>
+
+<div class="footer">
+  <a class="footer-link" href="https://github.com/YOURUSERNAME/kurwa-linux">github</a>
+  <span class="footer-bobr" id="footerBobr" onclick="footerClick()">🦫 BOBR KURWA 🦫</span>
+  <span id="uptimeClock">session: 0:00:00</span>
+</div>
+
+<script>
+const term=document.getElementById('terminal');
+let rageTarget=42,currentRage=0,typing=false;
+let logoClicks=0,titleClicks=0,dotClicks={r:0,y:0,g:0},taglineIdx=0;
+let konamiSeq=[],sessionStart=Date.now(),cmdCount=0,footerClicks=0;
+const KONAMI=[38,38,40,40,37,39,37,39,66,65];
+
+const FORTUNES=[
+  "The bóbr does not ask if you have a backup. The bóbr already knows the answer and it upsets him.",
+  "There are 10 types of people: those who use Arch, and those who are wrong. No nuance.",
+  "RTFM. The Arch wiki is 400,000 words. The answer to your question is in word 399,847.",
+  "git push --force. The bóbr has accepted the consequences on your behalf. You're welcome.",
+  "You don't need Windows. You need therapy. The bóbr recommends both. Starting with therapy.",
+  "Every kernel panic is a message from your computer. The message is always: you did this.",
+  "The first rule of Arch Linux: tell everyone you use Arch Linux, even when no one asked.",
+  "DNS is always the problem. Even when it isn't. Especially when it isn't.",
+  "rm -rf node_modules is not a solution. It is a grief ritual. The bóbr understands.",
+  "pacman -Syu is not a question. It's a lifestyle, a religion, and a personality type.",
+  "Your dotfiles are public. Everyone has seen them. The bóbr has opinions.",
+  "sudo !! is the closest you will ever get to admitting you were wrong. Cherish it.",
+  "'Works on my machine' is a valid deployment strategy. The bóbr disagrees but respects the chaos.",
+  "Have you tried turning it off and on again? The bóbr has tried this 3,847 times. It works.",
+  "Stack Overflow has your answer. Posted 2009. Marked duplicate of 2007 post. Good luck.",
+  "The cloud is just someone else's computer. The bóbr's computer. You're welcome.",
+  "99 problems and they're all DNS. The bóbr warned you. You did not listen.",
+  "chmod 777 is not a solution. It is a confession. The bóbr is judging you.",
+  "The bóbr sleeps 4 hours. The other 20 he spends updating your system while you sleep.",
+];
+
+const TAGLINES=[
+  '"It works on my machine" — Castor fiber, 2024',
+  '"Have you tried pacman -Syu" — The bóbr, always',
+  '"I use arch btw" — every arch user, constantly',
+  '"The kernel panic was not my fault" — you, lying',
+  '"Just five more plugins" — neovim user, 3am',
+  '"It was working yesterday" — classic. touching.',
+  '"I don\'t need a GUI" — narrator: they needed a GUI',
+  '"Let me just quickly compile this" — 47 minutes later',
+];
+
+const BOBR_STATES=[
+  ['WATCHING','always watching. always.'],['JUDGING','you specifically'],['ANGERY','but lovingly'],
+  ['PLEASED','for now. briefly.'],['KURWA!!!','extremely'],['LOGGING','your every mistake'],
+  ['NODDING','disapprovingly, slowly'],['ON BREAK','chewing a log, do not disturb'],
+  ['CONCERNED','deeply and personally'],['COMPILING','something you don\'t deserve'],
+  ['RESTING','after seeing your code'],['APPALLED','since 09:14:22'],
+];
+
+const PKG_TIPS=['most of them unnecessary','at least 3 are broken','neofetch counts as 4','you installed vim twice','one is literally called \'cowsay\''];
+const KERNEL_TIPS=['still booting, probably','has seen terrible things','patched with rage','do NOT look at dmesg','compiled at 4:20am'];
+
+const CMDS={
+  kurwa:{rage:100,lines:[['prompt','kurwa'],['bobr',''],['bobr','  ╔══════════════════════════════════╗'],['bobr','  ║   KURWA MODE: ACTIVATED  🔥🦫  ║'],['bobr','  ║   The bóbr has been summoned.   ║'],['bobr','  ║   God has been notified. Kurwa. ║'],['bobr','  ╚══════════════════════════════════╝'],['bobr',''],['bobr','       🦫  < BOBR KURWA! >'],['bobr',''],['warn',':: Synchronizing package databases...'],['ok','   core       [######################] 100%'],['ok','   extra      [######################] 100%'],['ok','   multilib   [######################] 100%  ← do you even USE multilib?'],['warn',':: Starting full system upgrade...'],['info',' there is nothing to do'],['info',' (the bóbr already ran this at 4am while you dreamt about fixing configs)'],['ok',''],['ok','System fresh. Bóbr satisfied. You may continue to exist. For now. Kurwa.']]},
+  beaver:{rage:69,lines:[['prompt','beaver'],['bobr',''],['bobr','  ██████╗  ██████╗ ██████╗ ██████╗'],['bobr','  ██╔══██╗██╔═══██╗██╔══██╗██╔══██╗'],['bobr','  ██████╔╝██║   ██║██████╔╝██████╔╝'],['bobr','  ██╔══██╗██║   ██║██╔══██╗██╔══██╗'],['bobr','  ██████╔╝╚██████╔╝██████╔╝██║  ██║'],['bobr','  ╚═════╝  ╚═════╝ ╚═════╝ ╚═╝  ╚═╝'],['bobr',''],['bobr','  ██╗  ██╗██╗   ██╗██████╗ ██╗    ██╗ █████╗'],['bobr','  ██║ ██╔╝██║   ██║██╔══██╗██║    ██║██╔══██╗'],['bobr','  █████╔╝ ██║   ██║██████╔╝██║ █╗ ██║███████║'],['bobr','  ██╔═██╗ ██║   ██║██╔══██╗██║███╗██║██╔══██║'],['bobr','  ██║  ██╗╚██████╔╝██║  ██║╚███╔███╔╝██║  ██║'],['bobr','  ╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═╝ ╚══╝╚══╝ ╚═╝  ╚═╝'],['bobr',''],['joke','  Fun fact: Castor fiber can chew through a tree in 20 minutes.'],['joke','  You have had the same vim buffer open for 3 days.'],['joke','  The bóbr is more productive. The bóbr does not use vim.'],['ok',''],['ok','  🦫 Bóbr wishes you luck. You will need it.']]},
+  wtf:{rage:80,lines:[['prompt','wtf'],['err','What the kurwa happened? Let me diagnose your suffering:'],['info','━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━'],['err','Mar 13 09:14:22 kernel: SSD exception — existential crisis. relatable.'],['err','Mar 13 09:17:45 systemd: NetworkManager timed out — gave up, like most things.'],['err','Mar 13 09:55:01 kernel: GPU fell off the bus — emotionally AND physically.'],['err','Mar 13 10:02:11 dbus: permission denied — as if you needed more rejection.'],['err','Mar 13 10:45:33 kernel: EXT4-fs error — filesystem sabotaged itself for fun.'],['err','Mar 13 11:30:00 pacman: conflicting files — two packages in a blood feud. your fault.'],['err','Mar 13 12:00:00 bobr-watchdog: anomalous user behavior — report filed.'],['info','━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━'],['warn','Root cause analysis: you.'],['warn','Recommended fix: touch grass, then reboot.'],['joke','The bóbr reviewed these logs and is requesting a mental health day.']]},
+  'kurwa-status':{rage:55,lines:[['prompt','kurwa-status'],['err','🦫 KURWA LINUX — SYSTEM STATUS (brace yourself)'],['info','━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━'],['ok','🖥️  Host:      kurwa-machine  ← great name. very enterprise.'],['ok','⏱️  Uptime:    2 days, 6 hours, 9 minutes  ← system is surprised too'],['ok','💾 RAM:       6.9G / 16G  ← Firefox has the rest. obviously.'],['ok','💿 Disk:      69G / 256G  ← node_modules estimated at 60G of that'],['ok','📦 Packages:  1337  ← elite number. probably accidental.'],['ok','🌡️  CPU temp:  52°C  ← this is fine. this is completely fine.'],['info','━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━'],['warn','🔄 Updates: 0 pending  ← bóbr ran kurwa at 4am. you were asleep. you\'re welcome.'],['ok',''],['ok','System alive. Bar was low. You cleared it. The bóbr is cautiously optimistic.']]},
+  'install neovim':{rage:60,lines:[['prompt','install neovim'],['warn',':: WARNING: This will increase your personality by -40 points.'],['warn',':: You will start every conversation with "I use neovim btw".'],['warn',':: You will have opinions about colorschemes. Proceed? [Y/n]'],['ok','y  ← of course you said yes'],['warn',':: Resolving dependencies...'],['info','   neovim requires: lua, tree-sitter, 47 plugins, 6 free weekends,'],['info','   and complete abandonment of shipping anything ever again.'],['ok',':: Downloading neovim-0.9.5...  [######################] 100%'],['ok','(1/1) installing neovim                    [done, god help us]'],['ok',''],['joke','Post-install tradition: 6 hours on init.lua. Use VSCode for the actual work.'],['joke','The bóbr uses vanilla vim since 1991. It is configured. He does not discuss it.'],['ok',''],['ok','Done. Welcome to the church. Sunday services in ##vim on libera.chat.'],['sarcasm','No we will not help you exit. Earn it.']]},
+  'kurwa-help':{rage:25,lines:[['prompt','kurwa-help'],['err','🦫 KURWA LINUX — HELP (the fact that you need this is noted)'],['info',''],['ok','  kurwa           → nuclear update + bóbr + crisis of faith'],['ok','  install <pkg>   → install with unsolicited commentary included'],['ok','  remove <pkg>    → delete with the energy of clearing an ex\'s stuff'],['ok','  update          → alias for kurwa. the WHOLE command is \'kurwa\'. we simplified.'],['ok','  beaver          → art. therapy. religion. all three.'],['ok','  wtf             → forensic breakdown of your recent mistakes'],['ok','  kurwa-status    → confirm system lives (low bar, somehow met)'],['ok','  bobr            → direct audience with the bóbr. he has thoughts.'],['ok','  kurwa-help      → you are HERE. reading THIS.'],['info',''],['joke','  Hidden commands exist. The bóbr hid them. He will not tell you.'],['sarcasm','  No man page. We will not make one. RTFM.'],['info',''],['warn','  The Arch wiki has 400,000 words. Your answer is in there. Probably.']]},
+  'rm -rf /':{rage:100,lines:[['prompt','rm -rf /'],['err',''],['err','  ██████╗  ██╗ ██████╗'],['err','  ██╔══██╗ ██║ ██╔══██╗'],['err','  ██████╔╝ ██║ ██████╔╝'],['err','  ██╔══██╗ ██║ ██╔══██╗'],['err','  ██████╔╝ ██║ ██████╔╝'],['err','  ╚═════╝  ╚═╝ ╚═════╝'],['err',''],['err','rm: cannot remove \'/\': the kernel flinched. literally flinched.'],['err','rm: cannot remove \'/usr/bin/kurwa\': protected by bóbr. immovable. eternal.'],['err','rm: cannot remove \'/home/user/.bashrc\': your bad aliases are permanent now.'],['err',''],['warn','Operation blocked. Bóbr notified. He is not surprised.'],['joke','You\'re the 4,719th person to try this. Number 1 was a Debian user.'],['ok','System intact. In spite of you. Kurwa.']]},
+  'sudo apt':{rage:95,lines:[['prompt','sudo apt'],['err',''],['err','kurwa: apt: command not found'],['err',''],['err','...apt.'],['err',''],['err','You. On Arch. Typed. apt.'],['err',''],['err','The bóbr is processing this. Please hold.'],['info','...'],['info','...'],['err','The bóbr has processed it. He is not okay.'],['info',''],['warn','Perhaps you meant:'],['ok','  sudo pacman -S   → install, correctly, on the correct OS'],['ok','  sudo pacman -Syu → update like an adult'],['ok','  kurwa            → the everything command'],['info',''],['joke','apt would have installed linux-headers and broken your GPU. you were saved.'],['sarcasm','Ubuntu is free. No judgment. Well. A lot of judgment.']]},
+  neofetch:{rage:45,lines:[['prompt','neofetch'],['bobr',''],['bobr','     🦫🦫🦫🦫🦫🦫🦫'],['bobr','    🦫             🦫'],['bobr','   🦫   KURWA OS   🦫'],['bobr','    🦫             🦫'],['bobr','     🦫🦫🦫🦫🦫🦫🦫'],['bobr',''],['ok','  user@kurwa-linux'],['ok','  ─────────────────────────────────────'],['ok','  OS:      Kurwa Linux x86_64 (Arch, obviously. we mention it often.)'],['ok','  Host:    A Machine That Has Seen Things'],['ok','  Kernel:  6.7.9-kurwa-1-KURWA (compiled in anger)'],['ok','  Uptime:  2 days, 9 minutes'],['ok','  Shell:   bash (we don\'t talk about the zsh phase)'],['ok','  DE:      KDE Plasma (dark mode, non-negotiable)'],['ok','  CPU:     Some hot rectangle @ "this is fine"°C'],['ok','  RAM:     6.9 GiB / 16.0 GiB (firefox: called, wants its memory back)'],['ok','  Disk:    69 GiB / 256G (breakdown: 60G node_modules, 9G actual work)'],['bobr',''],['joke','  🦫 The bóbr reviewed this neofetch and has a few notes.']]},
+  exit:{rage:0,lines:[['prompt','exit'],['info',''],['warn','exit: hold on. you have:'],['warn','  • 4 unsaved vim buffers from last Tuesday'],['warn','  • 2 detached tmux sessions from 2019 (they miss you)'],['warn','  • 1 process called "temporary_fix.sh" running since March'],['warn','  • the bóbr is still mid-compile. it has been 3 days.'],['info',''],['err','exit: this terminal does not close. you are here forever now.'],['err','exit: the bóbr disabled exit for your own safety.'],['info',''],['joke','hint: \'logout\' works. but we\'re not telling you that. oops.']]},
+  windows:{rage:100,lines:[['prompt','windows'],['err',''],['err','windows: command not found'],['err',''],['err','I want you to sit with what you just typed.'],['err',''],['err','In MY terminal. On MY Arch. With MY bóbr present.'],['err','You typed \'windows\'.'],['err',''],['warn','Incident reported to: the bóbr, the Arch community, the pacman maintainer, your future self.'],['info',''],['joke','Windows has WSL2 now. The bóbr pretends not to know this.'],['sarcasm','Your Arch membership is under review. Results in 3-5 business days.']]},
+  nano:{rage:85,lines:[['prompt','nano'],['err',''],['warn',':: nano detected. initiating disappointment protocol.'],['info',''],['err','kurwa. KURWA.'],['err','You are using nano. In 2024. On Arch.'],['err','The bóbr is filing a formal grievance.'],['info',''],['sarcasm','Counter-offer: vim. You will be trapped. That is the point. The trap builds character.'],['sarcasm','The bóbr has been trapped in vim since 1997. He is very well-built.'],['info',''],['warn','Opening nano anyway. We are not monsters. Unlike you.'],['info','  [ nano 7.2 — yes it tells you ^X to exit. disgraceful. convenient. ]'],['joke','  [ The bóbr has left the room. He cannot watch. ]'],['joke','  [ He is outside. Chewing a log. Processing feelings. ]']]},
+  fortune:{rage:30,lines:[['prompt','fortune'],['bobr',''],['bobr','  🦫  THE BÓBR SPEAKS:']]},
+  'uname -a':{rage:20,lines:[['prompt','uname -a'],['ok','Linux kurwa-machine 6.7.9-kurwa-1-KURWA #1 SMP PREEMPT_DYNAMIC Fri Mar 13 04:20:00 UTC 2026 x86_64 GNU/Linux'],['info',''],['joke','x86_64. Compiled at 4:20. The bóbr set that time intentionally.'],['sarcasm','Your kernel is real. This is about as exciting as it gets.']]},
+  'sudo make me a sandwich':{rage:50,lines:[['prompt','sudo make me a sandwich'],['info',''],['warn','[sudo] password for user: '],['ok','***'],['info',''],['info','compiling sandwich...'],['ok','  bread     [######################] 100%'],['ok','  mustard   [######################] 100%  ← yellow. not dijon. bóbr has standards.'],['ok','  cheese    [######################] 100%'],['ok','  mystery   [######################] 100%  ← do not ask what this is'],['info',''],['system','🥪 SANDWICH READY: /tmp/sandwich.tar.gz (cold, damp, bóbr-approved)'],['joke','sudo is a privilege. using it for sandwiches is also a privilege. well spent.']]},
+  'git blame':{rage:75,lines:[['prompt','git blame'],['err','fatal: not a git repository'],['err',''],['err','...but also, while we\'re here:'],['info',''],['warn','git blame — current session:'],['err','  09:14  user — ran pacman -Syu without reading news. caused breakage.'],['err','  09:47  user — tried to fix with chmod 777. made it worse.'],['err','  10:15  user — googled the error. closed tab without reading it.'],['err','  10:33  user — copy-pasted stackoverflow answer from 2012.'],['err','  10:34  user — it worked. user does not know why. will never know.'],['err','  11:01  user — pushed to main. no PR. bóbr is inconsolable.'],['info',''],['joke','git log: 1 commit: "final final FINAL fix v3 (USE THIS ONE)"'],['sarcasm','the bóbr has 4,000 commits. all have real messages. he judges you.']]},
+  'ping 8.8.8.8':{rage:30,lines:[['prompt','ping 8.8.8.8'],['ok','PING 8.8.8.8: 56 data bytes'],['ok','64 bytes from 8.8.8.8: icmp_seq=0 ttl=118 time=12.4 ms  ← google knows you\'re here.'],['ok','64 bytes from 8.8.8.8: icmp_seq=1 ttl=118 time=11.8 ms  ← it always knew.'],['ok','64 bytes from 8.8.8.8: icmp_seq=2 ttl=118 time=189.3 ms ← there it is. the lag spike.'],['ok','64 bytes from 8.8.8.8: icmp_seq=3 ttl=118 time=11.9 ms  ← back. gaslit.'],['warn','^C'],['ok','4 packets transmitted, 4 received, 0% packet loss'],['joke','internet works. DNS problem was DNS. always DNS.'],['sarcasm','bóbr uses 1.1.1.1. refuses to give google the satisfaction.']]},
+  'ls -la':{rage:15,lines:[['prompt','ls -la'],['ok','total 420'],['ok','drwxr-xr-x  23 user user  4096 Mar 13 04:20 .'],['ok','drwxr-xr-x   3 root root  4096 Jan  1  1970 ..  ← root created in 1970. classic.'],['ok','-rw-------   1 user user 97312 Mar 13 04:19 .bash_history  ← 97kb of regret'],['ok','-rw-r--r--   1 user user  4827 Mar 13 04:20 .bashrc  ← the sacred scroll'],['ok','drwxr-xr-x   8 user user  4096 Mar 12 23:47 .config  ← 3GB of configs. 0 finished.'],['ok','-rw-r--r--   1 user user     0 Feb 28 16:02 .gitconfig  ← email not set. bóbr knows.'],['ok','drwxr-xr-x 847 user user 57344 Mar 12 18:22 node_modules  ← 847 subdirectories.'],['ok','-rw-r--r--   1 user user     3 Mar 13 11:01 TODO  ← contains only the word "later"'],['joke',''],['joke','.bash_history: 97kb. the bóbr read it. he has questions. he will not ask them.']]},
+  'cat /etc/passwd':{rage:55,lines:[['prompt','cat /etc/passwd'],['ok','root:x:0:0:The Original Kurwa:/root:/bin/bash'],['ok','daemon:x:1:1:System Daemon (hates you):/usr/sbin:/usr/sbin/nologin'],['ok','bobr:x:69:69:Castor Fiber (watching):/home/bobr:/bin/bash  ← wait'],['ok','user:x:1000:1000:A Person Who Made Choices:/home/user:/bin/bash'],['ok','nobody:x:65534:65534:nobody (relatable):/nonexistent:/usr/sbin/nologin'],['info',''],['warn','notable: bobr has a home directory. bobr has bash. bobr has been here the whole time.'],['joke','bóbr is user 69. chosen in 1994. deliberately.']]},
+  'ssh root@localhost':{rage:90,lines:[['prompt','ssh root@localhost'],['warn','ssh: connect to host localhost port 22: Connection refused'],['warn','(SSH disabled. the bóbr disabled it. for your own safety.)'],['info',''],['err','but also: root@localhost?'],['err','ROOT. AT. LOCALHOST.'],['err',''],['err','You were going to SSH into your own machine. As root. From your own machine. As yourself.'],['err',''],['warn','A therapist has been dispatched. They are also using Arch.'],['joke','bóbr has root on every machine. he doesn\'t need SSH. he just appears.']]},
+  python3:{rage:40,lines:[['prompt','python3'],['ok','Python 3.11.8 [GCC 13.2.1]'],['ok','>>> '],['info',''],['info','(python is open. bóbr is watching. he will not debug your code.)'],['info','(your virtual environment is not activated. it never is.)'],['info',''],['warn','>>> import this'],['joke','"Beautiful is better than ugly." — bóbr disagrees. ugly is honest.'],['joke','"Simple is better than complex." — have you seen this bashrc?'],['joke','"One obvious way to do it." — there are 17. bóbr knows 16.']]},
+  'curl https://google.com':{rage:20,lines:[['prompt','curl https://google.com'],['ok','  % Total % Received  % Xferd  Average  Time'],['ok','100   219  100   219    0     0    432      0 --:--:--'],['ok','<HTML><HEAD><TITLE>301 Moved</TITLE>...'],['ok','The document has moved <A HREF="https://www.google.com/">here</A>.'],['info',''],['joke','google 301\'d you. it does not want you there. relatable.'],['sarcasm','you curled google instead of using a browser. you have achieved something.'],['joke','bóbr uses lynx. the text browser. he has seen the real internet. it is text.']]},
+  htop:{rage:35,lines:[['prompt','htop'],['ok','  PID USER    PRI  NI  VIRT   RES  CPU% MEM%  Command'],['ok','─────────────────────────────────────────────────────────'],['ok',' 1337 user    20   0 2048M  512M  47.2 12.5  firefox (12 tabs, all about vim)'],['ok',' 6969 user    20   0  892M  201M  23.1  5.0  code  ← yes, VSCode. after neovim.'],['ok',' 4200 user    20   0  156M   44M   8.3  1.1  Discord (telling people you use arch)'],['ok',' 9001 bobr     1 -20   ???M  ???M   0.0  ???  bobr-watchdog ← always present'],['ok',' 1984 user    20   0   44M   12M  99.9  0.3  temporary_fix.sh ← 6 DAYS. THIS IS FINE'],['info',''],['warn','temporary_fix.sh: 6 days, 99.9% CPU. is this intentional?'],['joke','bóbr\'s process: 0% CPU. powered by disappointment. renewable.']]},
+  'crontab -l':{rage:45,lines:[['prompt','crontab -l'],['ok','# kurwa runs at 4am (bóbr does this manually but belt and suspenders)'],['ok','0 4 * * * /usr/bin/kurwa >> /var/log/kurwa.log 2>&1'],['ok',''],['ok','# backup home dir (has never run. bóbr knows.)'],['ok','0 2 * * 0 tar -czf /backup/home_$(date +%Y%m%d).tar.gz /home/user 2>/dev/null'],['ok',''],['ok','# ??? (you don\'t remember writing this. the bóbr wrote this.)'],['ok','*/15 * * * * echo "BOBR KURWA" >> /tmp/bobr.log'],['ok',''],['ok','# weekly reminder (you have never read this email)'],['ok','0 9 * * 1 echo "read the arch wiki" | mail -s "you promised" user@localhost'],['info',''],['joke','bóbr has 847 crontab entries. none of them are yours. all his business.']]},
+  bobr:{rage:69,lines:[['prompt','bobr'],['bobr',''],['bobr','  consulting the bóbr...'],['bobr',''],['bobr','  🦫 ─────────────────────────────────────────'],['bobr','  🦫  "You are doing fine. Not great. Fine.'],['bobr','  🦫   The system works. You are the variable.'],['bobr','  🦫   Run kurwa. Drink water. Touch grass.'],['bobr','  🦫   The bóbr will be here. Always. Watching."'],['bobr','  🦫 ─────────────────────────────────────────'],['bobr',''],['ok','  Audience concluded. He has returned to his log.']]},
+  'pacman -Q':{rage:30,lines:[['prompt','pacman -Q | head -15'],['ok','alacritty 0.13.1-1   ← 4 hours of config. 2 lines of config.'],['ok','base 3-2             ← the bare minimum. same as your commit messages.'],['ok','cowsay 3.04-8        ← critical dependency. non-negotiable.'],['ok','discord 0.0.46-2     ← for telling people you use arch.'],['ok','firefox 124.0-1      ← 2.1GB. using 9GB RAM. you know which 12 tabs.'],['ok','git 2.44.0-1         ← commits: "fix", "fix2", "FINAL_FINAL"'],['ok','lolcat 100.0.1-2     ← rainbow text. worth it. always worth it.'],['ok','neovim 0.9.5-1       ← 6 hour config. uses: 0 times this week.'],['ok','node 21.6.1-1        ← for the 847 node_modules directories.'],['ok','pacman 6.0.2-7       ← the one true. sacred. immortal.'],['info','... 1327 more not shown. bóbr knows what you installed. always.']]},
+};
+
+const UNKNOWN=[
+  [['err','command not found.'],['joke','bold of you. the bóbr respects the chaos, not the decision.']],
+  [['err','bash: what is that. try kurwa-help.'],['sarcasm','the bóbr watched you type that. he felt something.']],
+  [['err','not found — and honestly, same.'],['joke','achievement unlocked: confused a fake terminal.']],
+  [['err','permission denied — not for technical reasons. morally.'],['warn','try: kurwa-help (please)']],
+  [['err','did you mean: literally anything else?'],['joke','the bóbr is shaking his head. slowly. with feeling.']],
+];
+
+function addLine(type,text){
+  const d=document.createElement('div');
+  d.className='t-line';
+  if(type==='prompt') d.innerHTML=`<span class="t-prompt">user@kurwa-linux ~ $ </span><span class="t-cmd">${esc(text)}</span>`;
+  else if(type==='system') d.innerHTML=`<span class="t-system">${esc(text)}</span>`;
+  else{d.className=`t-line t-${type}`;d.textContent=text;}
+  term.appendChild(d);term.scrollTop=term.scrollHeight;
+}
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
+
+async function runCmd(cmd){
+  if(typing)return;typing=true;cmdCount++;
+  document.getElementById('cmdInput').value='';
+  const def=CMDS[cmd];
+  let lines;
+  if(def){
+    lines=[...def.lines];
+    if(cmd==='fortune'){const f=FORTUNES[Math.floor(Math.random()*FORTUNES.length)];lines.push(['bobr',`  "${f}"`]);lines.push(['bobr','']);lines.push(['ok','  — Castor fiber, always']);}
+    rageTarget=Math.min(def.rage,100);
+  }else{
+    const u=UNKNOWN[Math.floor(Math.random()*UNKNOWN.length)];
+    lines=[['prompt',cmd],...u];rageTarget=Math.min(rageTarget+5,100);
+  }
+  for(const[type,text] of lines){addLine(type,text);const d=type==='bobr'?35:type==='ok'?50:type==='joke'?85:type==='sarcasm'?80:65;await sleep(d+Math.random()*30);}
+  addLine('info','');updateStats();
+  if(rageTarget>=95){document.getElementById('header').classList.add('shake');setTimeout(()=>document.getElementById('header').classList.remove('shake'),400);}
+  if(cmdCount===5){addLine('secret','🦫 [bóbr-watchdog]: 5 commands. bóbr is forming opinions.');addLine('info','');}
+  if(cmdCount===10){addLine('secret','🦫 [bóbr-watchdog]: 10 commands. bóbr has started a file on you.');addLine('info','');}
+  if(cmdCount===20){addLine('secret','🦫 [bóbr-watchdog]: 20 commands. productivity or a problem. unclear.');addLine('info','');}
+  if(cmdCount===69){addLine('system','🦫 ══════════════════════════════════════');addLine('system','🦫  ACHIEVEMENT UNLOCKED: 69 COMMANDS');addLine('system','🦫  "Nice." — The Bóbr');addLine('system','🦫 ══════════════════════════════════════');addLine('info','');}
+  typing=false;
+}
+
+function runCustom(){const v=document.getElementById('cmdInput').value.trim();if(!v)return;runCmd(v);}
+document.getElementById('cmdInput').addEventListener('keydown',e=>{if(e.key==='Enter')runCustom();});
+
+function logoClick(){logoClicks++;if(logoClicks===5){addLine('secret','🦫 [bóbr]: you clicked the logo 5 times. why. he respects the dedication.');addLine('info','');logoClicks=0;}}
+const TITLES=['kurwa-linux — bash — 80x24','definitely-not-windows — NOT CMD — 80x24','bobr@universe — judgment — ∞x∞','arch-linux-btw — zsh-i-lied — 80x24','this-is-fine — bash — 80x24'];
+function titleClick(){titleClicks=(titleClicks+1)%TITLES.length;document.getElementById('headerTitle').textContent=TITLES[titleClicks];if(titleClicks===0){addLine('secret','🦫 [bóbr]: you cycled the title. you have too much time. good.');addLine('info','');}}
+function dotClick(color){dotClicks[color]=(dotClicks[color]||0)+1;if(color==='r'&&dotClicks.r===3){addLine('secret','🦫 [bóbr]: 3 red clicks. nothing happened. or did it. (nothing happened.)');addLine('info','');dotClicks.r=0;}if(color==='y'&&dotClicks.y===3){addLine('secret','🦫 [bóbr]: 3 yellow clicks. bóbr acknowledges your yellow energy.');addLine('info','');dotClicks.y=0;}if(color==='g'&&dotClicks.g===5){addLine('system','🦫 ═══════════════════════════════════');addLine('system','🦫  GREEN DOT × 5: BOBR SEAL OF APPROVAL');addLine('system','🦫  you clicked a circle five times.');addLine('system','🦫  bóbr is pleased by your persistence.');addLine('system','🦫 ═══════════════════════════════════');addLine('info','');dotClicks.g=0;}}
+function cycleTagline(){taglineIdx=(taglineIdx+1)%TAGLINES.length;document.getElementById('tagline').textContent=TAGLINES[taglineIdx]+' [click to change]';}
+function rotateFortune(){document.getElementById('fortuneText').textContent=FORTUNES[Math.floor(Math.random()*FORTUNES.length)];}
+rotateFortune();setInterval(rotateFortune,9000);
+function rageBarClick(){rageTarget=100;addLine('warn',':: rage bar maxed manually. bóbr did not need your password to authorize this.');addLine('info','');}
+function footerClick(){footerClicks++;const msgs=['🦫 hello.','🦫 the bóbr sees you.','🦫 ...','🦫 stop clicking the bóbr.','🦫 seriously.','🦫 ok fine. the bóbr is flattered.','🦫 KURWA.'];if(footerClicks<msgs.length){addLine('bobr',msgs[footerClicks-1]);addLine('info','');}else{addLine('system','🦫 [bóbr]: '+footerClicks+' footer clicks. a record. bóbr is logging this.');addLine('info','');}}
+
+document.addEventListener('keydown',e=>{
+  konamiSeq.push(e.keyCode);if(konamiSeq.length>10)konamiSeq.shift();
+  if(JSON.stringify(konamiSeq)===JSON.stringify(KONAMI)){document.getElementById('konamiOverlay').classList.add('show');rageTarget=0;addLine('system','🦫 KONAMI ACCEPTED. bóbr is genuinely impressed. +30 lives.');addLine('info','');}
+  if(e.key==='Escape')document.getElementById('konamiOverlay').classList.remove('show');
+});
+
+let typedBuf='';
+document.addEventListener('keypress',e=>{
+  if(document.getElementById('cmdInput')===document.activeElement)return;
+  typedBuf+=e.key;if(typedBuf.length>10)typedBuf=typedBuf.slice(-10);
+  if(typedBuf.includes('bobr')){runCmd('bobr');typedBuf='';}
+  if(typedBuf.includes('kurwa')&&!typing){addLine('bobr','🦫 [ambient kurwa detected. bóbr nods.]');addLine('info','');typedBuf='';}
+});
+
+const RAGE_LEVELS=[[0,'EXISTENTIALLY CALM'],[20,'MILDLY TRIGGERED'],[40,'KURWA ACTIVATED'],[60,'FULL RAGE MODE'],[80,'BOBR KURWA!!!'],[95,'🔥 MAXIMUM KURWA 🔥']];
+const RAGE_COMMENTS=[[0,'suspiciously chill'],[20,'bóbr is watching'],[40,'something was typed'],[60,'getting spicy'],[80,'bóbr filed a report'],[95,'bóbr has logged off']];
+
+function animateRage(){
+  const diff=rageTarget-currentRage;currentRage+=diff*0.06;if(Math.abs(diff)<0.1)currentRage=rageTarget;
+  document.getElementById('rageFill').style.width=Math.min(currentRage,100)+'%';
+  let lbl=RAGE_LEVELS[0][1],cmt=RAGE_COMMENTS[0][1];
+  for(const[t,l] of RAGE_LEVELS){if(currentRage>=t)lbl=l;}
+  for(const[t,c] of RAGE_COMMENTS){if(currentRage>=t)cmt=c;}
+  document.getElementById('rageText').textContent=`${Math.round(Math.min(currentRage,100))}% — ${lbl}`;
+  document.getElementById('rageComment').textContent=cmt;
+  document.getElementById('headerBadge').textContent=currentRage>=95?'🔥 MAXIMUM KURWA':'● RAGE MODE ON';
+  requestAnimationFrame(animateRage);
+}
+
+function updateStats(){
+  const b=BOBR_STATES[Math.floor(Math.random()*BOBR_STATES.length)];
+  document.getElementById('bobrVal').textContent=b[0];document.getElementById('bobrTip').textContent=b[1];
+  document.getElementById('pkgVal').textContent=1337+Math.floor(Math.random()*42);
+  document.getElementById('pkgTip').textContent=PKG_TIPS[Math.floor(Math.random()*PKG_TIPS.length)];
+  document.getElementById('kernelTip').textContent=KERNEL_TIPS[Math.floor(Math.random()*KERNEL_TIPS.length)];
+}
+
+function updateUptime(){const s=Math.floor((Date.now()-sessionStart)/1000);const h=Math.floor(s/3600),m=Math.floor((s%3600)/60),ss=s%60;document.getElementById('uptimeClock').textContent=`session: ${h}:${String(m).padStart(2,'0')}:${String(ss).padStart(2,'0')}`;}
+setInterval(updateUptime,1000);
+
+async function boot(){
+  typing=true;
+  const lines=[['info','Kurwa Linux v1.0.0 — Arch Linux (x86_64)'],['info','Kernel 6.7.9-kurwa-1 — booted (the system is also surprised it worked)'],['info',''],['ok','[ OK ] kurwa-daemon: started. bóbr: online, logged in, judging.'],['ok','[ OK ] rage-monitor: calibrating. baseline fury: elevated.'],['ok','[ OK ] bobr-watchdog: active, rested, judgmental, caffeinated.'],['warn','[ !! ] 0 updates: bóbr ran kurwa at 4:20am. you were asleep. you\'re welcome.'],['info',''],['warn','Welcome back. The bóbr missed you. He will not say this again.'],['info',''],['info','Commands: kurwa  beaver  wtf  kurwa-status  neofetch  fortune  bobr'],['joke','Secret commands exist. The bóbr hid them. You will find them or you won\'t.'],['secret','hint: click things. type things. try ↑↑↓↓←→←→BA. the bóbr is watching.'],['info','']];
+  for(const[type,text] of lines){addLine(type,text);await sleep(70+Math.random()*40);}
+  rageTarget=42;typing=false;
+}
+
+animateRage();boot();
+</script>
+</body>
+</html>

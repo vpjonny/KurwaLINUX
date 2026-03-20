@@ -1,0 +1,56 @@
+#!/usr/bin/env bash
+# kurwa.motd — time-aware login message
+# Runs on login via ~/.bash_profile
+
+AMBER='\033[0;33m'
+CYAN='\033[0;36m'
+DIM='\033[2m'
+NC='\033[0m'
+
+HOUR=$(date +%H)
+
+if   [[ "$HOUR" -lt 6  ]]; then GREETING="What the kurwa are you doing at this hour?"
+elif [[ "$HOUR" -lt 9  ]]; then GREETING="Good morning. The bóbr has been up since 4am. He judged you."
+elif [[ "$HOUR" -lt 12 ]]; then GREETING="Good morning, you absolute legend. Kurwa."
+elif [[ "$HOUR" -lt 14 ]]; then GREETING="Midday. Are you eating? The bóbr wants to know."
+elif [[ "$HOUR" -lt 18 ]]; then GREETING="Welcome back. The bóbr missed you. He will not say this again."
+elif [[ "$HOUR" -lt 22 ]]; then GREETING="Evening. The bóbr is winding down. You should too. Kurwa."
+else                             GREETING="Still awake? The bóbr judges you. Also, same."
+fi
+
+echo ""
+if command -v figlet &>/dev/null && command -v lolcat &>/dev/null; then
+    figlet -f slant "BOBR KURWA" | lolcat
+elif command -v figlet &>/dev/null; then
+    figlet -f slant "BOBR KURWA"
+else
+    echo -e "${AMBER}  🦫🦫🦫  BOBR KURWA  🦫🦫🦫${NC}"
+fi
+
+echo ""
+echo -e "  ${AMBER}${GREETING}${NC}"
+echo -e "  ${CYAN}Kurwa Linux | $(uname -r) | $(date '+%A, %d %B %Y')${NC}"
+echo ""
+
+# Rotating wisdom
+WISDOM=(
+    "Don't ask. Just do it. Kurwa."
+    "git push --force. The bóbr accepts the consequences on your behalf."
+    "sudo is not magic. It is responsibility. Kurwa."
+    "If it doesn't work — restart. If still broken — forums. If forums fail — suffer."
+    "There are two types of people: Arch users, and people who are wrong."
+    "pacman -Syu is not a question. It is a lifestyle and a personality type."
+    "The bóbr does not ask if you have a backup. He already knows you don't."
+    "RTFM, kurwa. The Arch wiki exists and you have no excuse."
+    "chmod 777 is a confession, not a solution. The bóbr has seen your sudoers."
+    "DNS is always the problem. Even when it isn't. Especially when it isn't."
+    "Your dotfiles are public. Everyone has seen them. Adjust accordingly."
+    "Stack Overflow has your answer. It's marked as duplicate. Of a 2007 post. Kurwa."
+    "'Works on my machine' is a valid deployment strategy. The bóbr disagrees but respects the chaos."
+    "rm -rf node_modules is not a solution. It is a grief ritual. The bóbr understands."
+    "The bóbr sleeps 4 hours. The other 20 he spends watching your processes and judging."
+)
+
+IDX=$(( RANDOM % ${#WISDOM[@]} ))
+echo -e "  ${DIM}💬 ${WISDOM[$IDX]}${NC}"
+echo ""

@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+# wtf — forensic analysis of your recent mistakes
+# journalctl with sarcasm
+
+RED='\033[0;31m'
+YELLOW='\033[1;33m'
+CYAN='\033[0;36m'
+DIM='\033[2m'
+NC='\033[0m'
+
+echo ""
+echo -e "${RED}What the kurwa happened? Recent errors:${NC}"
+echo -e "${DIM}(bóbr-watchdog has been logging everything. everything.)${NC}"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo ""
+
+if journalctl -p err -n 20 --no-pager 2>/dev/null; then
+    : # journalctl worked
+else
+    # Fallback if journalctl unavailable
+    dmesg 2>/dev/null | grep -i "error\|fail\|panic" | tail -20 \
+        || echo -e "${DIM}No errors found. Either everything is fine or the errors are hiding. Kurwa.${NC}"
+fi
+
+echo ""
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo ""
+echo -e "${YELLOW}Root cause analysis: probably you.${NC}"
+echo -e "${YELLOW}Recommended fix: touch grass, then reboot.${NC}"
+echo -e "${DIM}The bóbr reviewed these logs. He is requesting a mental health day.${NC}"
+echo ""

@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+# bobr — direct audience with the bóbr
+# He has thoughts. He will share them.
+
+AMBER='\033[0;33m'
+GREEN='\033[0;32m'
+DIM='\033[2m'
+NC='\033[0m'
+
+# Rotating bóbr wisdom
+WISDOM=(
+    "You are doing fine. Not great. Fine. The system works. You are the variable."
+    "Run kurwa. Drink water. Touch grass. The bóbr will be here. Always. Watching."
+    "There is no patch for human stupidity but 'sudo pacman -S clue' is worth trying."
+    "The bóbr has reviewed your situation. The bóbr has notes. He will not share all of them."
+    "git push --force. The bóbr has accepted the consequences on your behalf. You're welcome."
+    "RTFM. The Arch wiki is 400,000 words. The answer to your question is in word 399,847."
+    "DNS is always the problem. Even when it isn't. Especially when it isn't."
+    "Your dotfiles are public. Everyone has seen them. The bóbr has opinions."
+    "Have you tried turning it off and on again? The bóbr has tried this 3,847 times. It works."
+    "chmod 777 is not a solution. It is a confession. The bóbr is judging you."
+    "The bóbr does not use IDEs. The bóbr suffers in vim, correctly, with dignity and spite."
+    "Stack Overflow has your answer. It was posted in 2009. Marked as duplicate. Of a 2007 post."
+    "The cloud is just someone else's computer. The bóbr's computer. You're welcome."
+)
+
+IDX=$(( RANDOM % ${#WISDOM[@]} ))
+
+echo ""
+echo -e "${AMBER}  🦫 ─────────────────────────────────────────────${NC}"
+echo -e "${AMBER}  🦫  consulting the bóbr...${NC}"
+echo -e "${AMBER}  🦫 ─────────────────────────────────────────────${NC}"
+echo ""
+echo -e "${DIM}  \"${WISDOM[$IDX]}\"${NC}"
+echo ""
+echo -e "${AMBER}  🦫 ─────────────────────────────────────────────${NC}"
+echo -e "${GREEN}  Audience concluded. He has returned to his log.${NC}"
+echo ""

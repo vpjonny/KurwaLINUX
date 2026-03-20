@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+# kurwa-status — system health check, bóbr edition
+# Spoiler: it's fine. probably.
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+DIM='\033[2m'
+NC='\033[0m'
+
+echo ""
+echo -e "${RED}🦫 KURWA LINUX — SYSTEM STATUS${NC}"
+echo -e "${DIM}   (brace yourself)${NC}"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+echo -e "${GREEN}🖥️  Host:     $(hostname)  ${DIM}← great name. very enterprise.${NC}"
+echo -e "${GREEN}⏱️  Uptime:   $(uptime -p)  ${DIM}← the system is surprised too${NC}"
+echo -e "${GREEN}💾 RAM:      $(free -h | awk '/^Mem:/ {print $3 "/" $2}')  ${DIM}← Firefox has the rest. classic.${NC}"
+echo -e "${GREEN}💿 Disk:     $(df -h / | awk 'NR==2 {print $3 "/" $2 " (" $5 " used)"}')  ${DIM}← node_modules not shown (mercy)${NC}"
+echo -e "${GREEN}📦 Packages: $(pacman -Q 2>/dev/null | wc -l) installed  ${DIM}← most of them unnecessary${NC}"
+
+# CPU temp if available
+if command -v sensors &>/dev/null; then
+    TEMP=$(sensors 2>/dev/null | grep -i "core 0" | head -1 | awk '{print $3}')
+    echo -e "${GREEN}🌡️  CPU temp: ${TEMP}  ${DIM}← this is fine. everything is fine.${NC}"
+fi
+
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+# Check updates
+UPDATES=$(checkupdates 2>/dev/null | wc -l || echo "?")
+if [[ "$UPDATES" == "0" ]]; then
+    echo -e "${GREEN}🔄 Updates: 0 pending  ${DIM}← bóbr ran kurwa at 4am. you're welcome.${NC}"
+elif [[ "$UPDATES" == "?" ]]; then
+    echo -e "${YELLOW}🔄 Updates: unknown  ${DIM}← run kurwa to find out. or don't. kurwa.${NC}"
+else
+    echo -e "${YELLOW}🔄 Updates: $UPDATES pending  ${DIM}← run kurwa, coward.${NC}"
+fi
+
+echo ""
+echo -e "${GREEN}System alive. Bar was low. You cleared it.${NC}"
+echo -e "${DIM}The bóbr is cautiously optimistic. Don't push it.${NC}"
+echo ""

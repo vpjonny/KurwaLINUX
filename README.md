@@ -1,164 +1,168 @@
-# EndeavourOS-ISO
+# 🦫 Kurwa Linux
 
-[![Maintenance](https://img.shields.io/maintenance/yes/2026.svg)]()
+> *"Because that's how it is, kurwa."*
 
-**main** branch is development latest (unstable)
-
-### Developers:
-- [joekamprad](https://github.com/killajoe)
-- [manuel](https://github.com/manuel-192)
-- [fernandomaroto](https://github.com/Portergos) (initial developer)
-
-### Сontributors
-
-<a href="https://github.com/endeavouros-team/EndeavourOS-ISO/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=endeavouros-team/EndeavourOS-ISO" />
-</a>
-
-..and our beloved community
-
-This ISO is based on hugely modified Arch-ISO to provide Installation Environment for EndeavourOS.  
-More info at [EndeavourOS-GitHub-Development](https://endeavouros-team.github.io/EndeavourOS-Development/)
-
-
-## Resources:
-
-<img src="https://raw.githubusercontent.com/endeavouros-team/screenshots/master/KDE-LiveSession.png" alt="Installer LiveSession" width="600"/>
-
-- https://endeavouros.com
-- [Getting help at the forum](https://forum.endeavouros.com)
-- [Bug report](https://forum.endeavouros.com/c/general-system/endeavouros-installation)
-- [Telegram help-chat](https://t.me/Endeavouros)
-- [Twitter news](https://twitter.com/OsEndeavour)
-
-Our journey wouldn't be made possible without the generosity of our [Open Collective community](https://opencollective.com/endeavouros)!
-
-
-### Development source
-
-- [EndeavourOS-ISO source](https://github.com/endeavouros-team/EndeavourOS-ISO) (Live environment with KDE-Desktop)
-- [Calamares {EndeavourOS fork}](https://github.com/endeavouros-team/calamares) (installer framework)
-
-
-### Base source
-
-- [Arch-ISO](https://gitlab.archlinux.org/archlinux/archiso)
-- [Calamares](https://codeberg.org/Calamares/calamares)
-
-
-
-# Boot options
-
-Systemd-boot for UEFI systems:  
-<img src="https://raw.githubusercontent.com/endeavouros-team/screenshots/refs/heads/master/EndeavourOS-ISO/systemdboot.png" alt="drawing" width="600"/>
-
-Bios-boot (syslinux) for legacy systems:  
-<img src="https://raw.githubusercontent.com/endeavouros-team/screenshots/refs/heads/master/EndeavourOS-ISO/syslinux.png" alt="drawing" width="600"/>
-
-
-
-# How to build ISO
-
-You need to use an installed EndeavourOS system or any archbased system with EndeavourOS [repository](https://github.com/endeavouros-team/mirrors) enabled.
-
-As the installer packages and needed dependencies will get installed from EndeavourOS repository.
-
-General information: 
-
-https://endeavouros-team.github.io/EndeavourOS-Development/
-
-Read the changelog before starting to learn about latest changes:
-
-https://github.com/endeavouros-team/EndeavourOS-ISO/blob/main/CHANGELOG.md
-
-### Install build dependencies
+[![License: WTFPL](https://img.shields.io/badge/License-WTFPL-brightred.svg)](http://www.wtfpl.net/)
+[![Made with: Rage](https://img.shields.io/badge/Made%20with-Pure%20rage-red)](https://github.com)
+[![Bóbr: Kurwa](https://img.shields.io/badge/B%C3%B3br-KURWA%20%F0%9F%A6%AB-orange)](https://github.com)
+[![Pacman: --noconfirm](https://img.shields.io/badge/pacman--noconfirm-always-blue)](https://archlinux.org)
+[![Kurwa count: many](https://img.shields.io/badge/kurwa%20count-many-red)](https://github.com)
 
 ```
-sudo pacman -S archiso git squashfs-tools --needed
+██╗  ██╗██╗   ██╗██████╗ ██╗    ██╗ █████╗     ██╗     ██╗███╗   ██╗██╗   ██╗██╗  ██╗
+██║ ██╔╝██║   ██║██╔══██╗██║    ██║██╔══██╗    ██║     ██║████╗  ██║██║   ██║╚██╗██╔╝
+█████╔╝ ██║   ██║██████╔╝██║ █╗ ██║███████║    ██║     ██║██╔██╗ ██║██║   ██║ ╚███╔╝
+██╔═██╗ ██║   ██║██╔══██╗██║███╗██║██╔══██║    ██║     ██║██║╚██╗██║██║   ██║ ██╔██╗
+██║  ██╗╚██████╔╝██║  ██║╚███╔███╔╝██║  ██║    ███████╗██║██║ ╚████║╚██████╔╝██╔╝ ██╗
+╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═╝ ╚══╝╚══╝ ╚═╝  ╚═╝    ╚══════╝╚═╝╚═╝  ╚═══╝ ╚═════╝ ╚═╝  ╚═╝
 ```
-It is recommended to reboot after these changes.
 
-### Build
+**Kurwa Linux** is not a distro. It's a state of mind. A customization layer for Arch/EndeavourOS
+users who are tired of their system being polite about things.
 
-##### 1. Prepare
+One script. Zero mercy. One beaver. Many kurwas.
 
-If you want the last release state to rebuild the ISO, you need to use a specifically tagged tarball from here:
-https://github.com/endeavouros-team/EndeavourOS-ISO/tags
+---
 
-If not, it will default to using the latest "unstable" development state.
+## ⚡ Quick Install
 
-example using latest **stable** release (23.11.1.2 Galileo KDE Release) 
+```bash
+git clone https://github.com/YOURUSERNAME/kurwa-linux.git
+cd kurwa-linux
+bash install.sh
+source ~/.bashrc
+kurwa
+```
 
-**Warning:** do **not** use the zip tarball, in case this causes issues with symlinks.
+Boom. Your system now hates you back. Congratulations. The bóbr is watching.
+
+---
+
+## 📦 What Gets Installed
+
+| Component | Description |
+|-----------|-------------|
+| `kurwa` | Nuclear update + rage output + bóbr summoning |
+| `beaver` | Summon the bóbr (artistic, therapeutic, spiritual) |
+| `wtf` | Forensic analysis of your recent mistakes |
+| `kurwa-status` | System health check — spoiler: it's fine. probably. |
+| `kurwa-help` | All commands, explained with judgment |
+| `bobr` | Direct audience with the bóbr. he has thoughts. |
+| MOTD | Time-aware greeting on every login (the bóbr knows what hour it is) |
+| Rage aliases | `install`, `remove`, `update` — all with commentary |
+
+---
+
+## 🔥 Commands
+
+```bash
+kurwa              # Full system update + rage + bóbr summoning
+beaver             # The bóbr, in ASCII, with facts about your vim usage
+wtf                # Last 20 errors, annotated sarcastically
+kurwa-status       # System stats with unsolicited opinions
+kurwa-help         # This, but angrier and more judgmental
+bobr               # Consult the bóbr. he will be honest with you.
+install <pkg>      # pacman -S with commentary
+remove <pkg>       # pacman -Rns with satisfaction
+update             # alias for kurwa. the whole command is just kurwa. we simplified.
+```
+
+---
+
+## 🗂️ Repo Structure
 
 ```
-wget https://github.com/endeavouros-team/EndeavourOS-ISO/archive/refs/tags/23.11.1.2.tar.gz
-tar -xvf 23.11.1.2.tar.gz
-cd "EndeavourOS-ISO-23.11.1.2"
-./prepare.sh
+kurwa-linux/
+├── README.md                    # You are here, kurwa
+├── install.sh                   # One-shot installer (backs up .bashrc first, don't worry)
+├── uninstall.sh                 # For cowards
+├── aliases.sh                   # Sourced by install.sh — all the rage
+├── bin/
+│   ├── kurwa                    # The main event
+│   ├── beaver                   # Bóbr summoner
+│   ├── wtf                      # Journal rage viewer
+│   ├── kurwa-status             # System health, bóbr edition
+│   ├── kurwa-help               # Help, with opinions
+│   └── bobr                     # Direct bóbr consultation
+├── motd/
+│   └── kurwa.motd               # Time-aware login message + rotating wisdom
+├── themes/
+│   └── neofetch-bobr.conf       # Neofetch config, kurwa edition
+├── sounds/
+│   └── README.md                # Instructions (bring your own bóbr audio)
+├── docs/
+│   └── PHILOSOPHY.md            # The deeper lore, kurwa
+└── .github/
+    └── workflows/
+        └── ci.yml               # CI that checks kurwa count in README (min 5, non-negotiable)
 ```
-### Or use latest **unstable** development branch using by cloning this repo using git:
 
-```
-git clone https://github.com/endeavouros-team/EndeavourOS-ISO.git
-cd EndeavourOS-ISO
-./prepare.sh
-```
-### In case you want to build pre Galileo Releases:
+---
 
-If  that you can use older tags like:
-```
-wget https://github.com/endeavouros-team/EndeavourOS-ISO/archive/refs/tags/22.12.2.tar.gz
-tar -xvf 22.12.2.tar.gz
-cd "EndeavourOS-ISO-22.12.2"
-./prepare.sh
-```
-But caused by the change to KDE these iso will use XFCE4 LiveSession and you will need to build calamares manually to get old style theming that is setup for the XFCE4 LiveSession:
+## 🛠️ Requirements
 
-using this PKGBUILD: 
-https://raw.githubusercontent.com/endeavouros-team/PKGBUILDS/18e3f580abb68486091492168956619bb0f32abe/calamares/PKGBUILD
+- Arch Linux or EndeavourOS *(others: go back to Ubuntu)*
+- `pacman`
+- `bash`
+- The will to suffer
 
-And put the resulting package into ISO structure to get installed with the ISO build procedure:
+**Auto-installed:** `cowsay`, `figlet`, `lolcat`, `neofetch`
 
-`airootfs/root/packages/`
+---
 
-To get this working you need to remove `calamares` from `packages.x86_64` before starting ISO build.
+## 🚫 What This Is NOT
 
-##### 2. Build
+- A real distro *(pacman would segfault from the energy)*
+- Safe for work terminals
+- Responsible in any way
+- Compatible with `apt` *(kurwa, get out)*
+- A substitute for reading the Arch wiki *(nothing is)*
 
-~~~
-sudo ./mkarchiso -v "."
-~~~
+---
 
-**or with log:**
+## 🦫 FAQ
 
-~~~
-sudo ./mkarchiso -v "." 2>&1 | tee "eosiso_$(date -u +'%Y.%m.%d-%H:%M').log"
-~~~
+**Q: Will this break my system?**
+A: It backs up `.bashrc` first. Probably fine. Kurwa.
 
-##### 3. The .iso file appears in the `out` directory...
+**Q: Can I use this on Ubuntu?**
+A: No. Go away. Ubuntu has its own problems and they are not our problems.
 
+**Q: What does "kurwa" mean?**
+A: It's a Polish word. It means everything. You'll understand after your third kernel panic.
 
-## Advanced
+**Q: Is the bóbr real?**
+A: The bóbr is always real. The bóbr has a home directory. The bóbr has been here the whole time.
 
-To install locally built packages on ISO, put the packages inside the following directory:
+**Q: Why is temporary_fix.sh still running?**
+A: It's fine. Everything is fine.
 
-~~~
-airootfs/root/packages
-~~~
+**Q: How do I exit vim?**
+A: We will not help you. Earn it.
 
-Packages will be installed and the directory will be cleaned up after that.
+**Q: How do I uninstall?**
+A: `bash uninstall.sh` — but the bóbr will know.
 
+---
 
-## General  ISO naming:
+## 🤝 Contributing
 
-Example:
+PRs welcome. Hard requirements:
+1. Must contain at least one "kurwa" (CI enforces this — minimum 5 in README)
+2. Must not break pacman (this is sacred)
+3. Must be funnier than what's already here (high bar, kurwa)
+4. Commit messages must be real sentences (not "fix", "fix2", "FINAL_FINAL_v3")
 
-~~~
-EndeavourOS_Galileo-Neo-2024.01.25.iso
-~~~
+---
 
-**EndeavourOS_RELEASENAMEREBUILD-YYYY.MM.DD.iso**
+## 📜 License
 
-* YYYY.MM.DD: of the release 
-* REBUILD: (empty), -Neo, -Nova 
+[WTFPL](http://www.wtfpl.net/) — Do What The Fuck You Want To Public License.
+Specifically: whatever, kurwa. Don't blame us if it breaks. It won't. Probably.
+
+---
+
+<p align="center">
+  <b>🦫 BÓBR KURWA 🦫</b><br>
+  <i>"You are doing fine. Not great. Fine." — The Bóbr</i>
+</p>

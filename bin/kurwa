@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+# kurwa — the main event
+# Nuclear update + bóbr summoning + existential commentary
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+DIM='\033[2m'
+NC='\033[0m'
+
+echo -e "${RED}"
+echo "  ╔══════════════════════════════════╗"
+echo "  ║   KURWA MODE: ACTIVATED  🔥🦫  ║"
+echo "  ║   The bóbr has been summoned.   ║"
+echo "  ║   God has been notified. Kurwa. ║"
+echo "  ╚══════════════════════════════════╝"
+echo -e "${NC}"
+
+# Bóbr speech bubble
+if command -v cowsay &>/dev/null; then
+    cowsay -f tux "BOBR KURWA!" 2>/dev/null
+else
+    echo "🦫  BOBR KURWA!"
+fi
+
+echo ""
+echo -e "${YELLOW}Synchronizing package databases...${NC}"
+echo -e "${DIM}(the bóbr already did this at 4am but we're doing it again for completeness)${NC}"
+echo ""
+
+if sudo pacman -Syu --noconfirm; then
+    echo ""
+    echo -e "${GREEN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo -e "${GREEN}  System updated. Bóbr satisfied.${NC}"
+    echo -e "${GREEN}  You may continue to exist. For now.${NC}"
+    echo -e "${GREEN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+else
+    echo ""
+    echo -e "${RED}Something went wrong. This is your fault somehow.${NC}"
+    echo -e "${DIM}Run wtf to see the evidence. The bóbr is filing a report.${NC}"
+    exit 1
+fi
