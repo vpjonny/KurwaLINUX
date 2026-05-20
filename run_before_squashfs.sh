@@ -8,6 +8,21 @@
 script_path=$(readlink -f "${0%/*}")
 work_dir="work"
 
+# needed for ranking mirrors inside the chroot start
+get_country() {
+  for url in \
+    "https://ipapi.co/country_code" \
+    "https://ifconfig.co/country-iso" \
+    "https://ipinfo.io/country"; do
+
+    code="$(curl -fs "$url" 2>/dev/null | grep -oE '^[A-Z]{2}$')"
+    [[ -n "$code" ]] && echo "$code" && return
+  done
+}
+
+COUNTRY="$(get_country)"
+# needed for ranking mirrors inside the chroot end
+
 # Adapted from AIS. An excellent bit of code!
 # all path must be in quotation marks "path/to/file/or/folder" for now.
 
@@ -28,7 +43,30 @@ cd "/root"
 echo "---> Init & Populate keys --->"
 pacman-key --init
 pacman-key --populate archlinux endeavouros
+echo "---> generating actual ranked mirrorlist to fetch packages for offline install---> "
+cp -a "/etc/pacman.d/mirrorlist" "/etc/pacman.d/mirrorlist-from-package"
+mkdir -p "/etc/pacman.d/"
+
+echo "---> generate mirrorlist safely ---> "
+
+if [[ -n "$COUNTRY" ]]; then
+  reflector \
+    --country "$COUNTRY" \
+    --protocol "https" \
+    --sort "rate" \
+    --latest "10" \
+    --save "/etc/pacman.d/mirrorlist"
+else
+  reflector \
+    --protocol "https" \
+    --sort "rate" \
+    --latest "20" \
+    --save "/etc/pacman.d/mirrorlist"
+fi
+
+echo "---> generate mirrorlist done ---> "
 pacman -Syy
+echo "---> updating package db done ---> "
 
 echo "---> backup bash configs from skel to replace after liveuser creation --->"
 mkdir -p "/root/filebackups/"
@@ -72,41 +110,6 @@ echo "--> content of /root/packages:"
 ls "/root/packages/"
 echo "end of content of /root/packages. <---"
 
-echo "---> generating actual ranked mirrorlist to fetch packages for offline install---> "
-echo "---> back up original to replace later---> "
-cp "/etc/pacman.d/mirrorlist" "/etc/pacman.d/mirrorlist.later"
-mkdir -p "/etc/pacman.d/"
-echo "---> generate mirrorlist safely ---> "
-get_country() {
-  for url in \
-    "https://ipapi.co/country_code" \
-    "https://ifconfig.co/country-iso" \
-    "https://ipinfo.io/country"; do
-
-    code="$(curl -fs "$url" 2>/dev/null | grep -oE '^[A-Z]{2}$')"
-    [[ -n "$code" ]] && echo "$code" && return
-  done
-}
-
-COUNTRY="$(get_country)"
-
-if [[ -n "$COUNTRY" ]]; then
-  reflector \
-    --country "$COUNTRY" \
-    --protocol "https" \
-    --sort "rate" \
-    --latest "10" \
-    --save "/etc/pacman.d/mirrorlist"
-else
-  reflector \
-    --protocol "https" \
-    --sort "rate" \
-    --latest "20" \
-    --save "/etc/pacman.d/mirrorlist"
-fi
-
-echo "---> generate mirrorlist done ---> "
-
 pacman -Sy
 pacman -U --noconfirm --needed -- "/root/packages/"*".pkg.tar.zst"
 rm -rf "/root/packages/"
@@ -126,7 +129,7 @@ chmod 644 "/usr/share/endeavouros/backgrounds/"*".png"
 echo "---> install bash configs back into /etc/skel for offline install target --->"
 cp -af "/root/filebackups/"{".bashrc",".bash_profile"} "/etc/skel/"
 
-echo "---> remove blacklisting nouveau out of ISO (nvidia-utls blacklist configs) --->"
+echo "---> remove blacklisting nouveau out of ISO (nvidia-utils blacklist configs) --->"
 rm "/usr/lib/modprobe.d/nvidia-utils.conf"
 rm "/usr/lib/modules-load.d/nvidia-utils.conf"
 
@@ -134,13 +137,6 @@ echo "---> get needed packages for offline installs --->"
 mkdir -p "/usr/share/packages"
 pacman -Syy
 pacman -Sw --noconfirm --cachedir "/usr/share/packages" grub eos-dracut kernel-install-for-dracut os-prober xf86-video-intel nvidia-open nvidia-hook nvidia-utils nvidia-inst broadcom-wl
-
-echo "---> Clean pacman log and package cache --->"
-rm "/var/log/pacman.log"
-# pacman -Scc seem to fail so:
-rm -rf "/var/cache/pacman/pkg/"
-echo "---> replace mirrorlist with original again --->"
-mv /etc/pacman.d/mirrorlist.later /etc/pacman.d/mirrorlist
 
 echo "---> create package versions file --->"
 pacman -Qs | grep "/calamares " | cut -c7- > iso_package_versions
@@ -150,6 +146,13 @@ pacman -Qs | grep "/mesa " | cut -c7- >> iso_package_versions
 pacman -Qs | grep "/xorg-server " | cut -c7- >> iso_package_versions
 pacman -Qs | grep "/nvidia-utils " | cut -c7- >> iso_package_versions
 mv "iso_package_versions" "/home/liveuser/"
+
+echo "---> Clean pacman log and package cache --->"
+rm "/var/log/pacman.log"
+# pacman -Scc seem to fail so:
+rm -rf "/var/cache/pacman/pkg/"
+echo "---> remove ranked mirrorlist, used for fetching offline packages replacing it with original from package --->"
+mv "/etc/pacman.d/mirrorlist-from-package" "/etc/pacman.d/mirrorlist"
 
 echo "############################"
 echo "# end chrooted commandlist #"
